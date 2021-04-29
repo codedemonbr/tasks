@@ -7,6 +7,7 @@ import {
     ImageBackground,
     StyleSheet,
 } from "react-native";
+import Task from "../components/Task";
 
 import todayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
@@ -60,10 +61,16 @@ export default class TaskList extends Component {
                         </View>
                     </ImageBackground>
                     <View style={styles.taskList}>
-                        <Text>Tarefa #1</Text>
-                        <Text>Tarefa #2</Text>
-                        <Text>Tarefa #3</Text>
-                        <Text>Tarefa #4</Text>
+                        <Task
+                            desc="Comprar Livro"
+                            estimateAt={new Date()}
+                            doneAt={new Date()}
+                        />
+                        <Task
+                            desc="Ler Livro"
+                            estimateAt={new Date()}
+                            doneAt={null}
+                        />
                     </View>
                 </SafeAreaView>
             );
