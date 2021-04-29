@@ -5,6 +5,9 @@ import commonStyles from "../commonStyles";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
 import AppLoading from "expo-app-loading";
 
+import moment from "moment";
+import "moment/locale/pt-br";
+
 export default (props) => {
     let [fontsLoaded] = useFonts({ Lato_400Regular });
 
@@ -15,6 +18,11 @@ export default (props) => {
     const doneOrNotStyle =
         props.doneAt != null ? { textDecorationLine: "line-through" } : {};
 
+    const date = props.doneAt ? props.doneAt : props.estimateAt;
+    const formattedDate = moment(date)
+        .locale("pt-br")
+        .format("ddd, D [de] MMMM");
+
     return (
         <View style={styles.container}>
             <View style={styles.checkContainer}>
@@ -22,7 +30,7 @@ export default (props) => {
             </View>
             <View>
                 <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text>{props.estimateAt + ""} </Text>
+                <Text style={[styles.date]}>{formattedDate} </Text>
             </View>
         </View>
     );
@@ -73,5 +81,10 @@ const styles = StyleSheet.create({
         fontFamily: "Lato_400Regular",
         color: commonStyles.colors.mainText,
         fontSize: 15,
+    },
+    date: {
+        fontFamily: "Lato_400Regular",
+        color: commonStyles.colors.subText,
+        fontSize: 12,
     },
 });
