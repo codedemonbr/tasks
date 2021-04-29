@@ -2,15 +2,26 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import commonStyles from "../commonStyles";
+import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
+import AppLoading from "expo-app-loading";
 
 export default (props) => {
+    let [fontsLoaded] = useFonts({ Lato_400Regular });
+
+    if (!fontsLoaded) {
+        return <AppLoading />;
+    }
+
+    const doneOrNotStyle =
+        props.doneAt != null ? { textDecorationLine: "line-through" } : {};
+
     return (
         <View style={styles.container}>
             <View style={styles.checkContainer}>
                 {getCheckView(props.doneAt)}
             </View>
             <View>
-                <Text>{props.desc}</Text>
+                <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
                 <Text>{props.estimateAt + ""} </Text>
             </View>
         </View>
@@ -57,5 +68,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#4d7031",
         alignItems: "center",
         justifyContent: "center",
+    },
+    desc: {
+        fontFamily: "Lato_400Regular",
+        color: commonStyles.colors.mainText,
+        fontSize: 15,
     },
 });
