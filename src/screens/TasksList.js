@@ -38,6 +38,7 @@ let customFonts = {
 export default class TaskList extends Component {
     state = {
         showDoneTasks: true,
+        visibleTasks: [],
         fontsLoaded: false,
         tasks: [
             {
@@ -56,7 +57,22 @@ export default class TaskList extends Component {
     };
 
     toggleFilter = () => {
-        this.setState({ showDoneTasks: !this.state.showDoneTasks });
+        this.setState(
+            { showDoneTasks: !this.state.showDoneTasks },
+            this.filterTasks
+        );
+    };
+
+    filterTasks = () => {
+        let visibleTasks = null;
+        if (this.state.showDoneTasks) {
+            visibleTasks = [...this.state.tasks];
+        } else {
+            const pending = (task) => task.doneAt === null;
+            visibleTasks = this.state.tasks.filter(pending);
+        }
+
+        this.setState({ visibleTasks });
     };
 
     toggleTask = (taskId) => {
@@ -67,7 +83,7 @@ export default class TaskList extends Component {
             }
         });
 
-        this.setState({ tasks: tasks });
+        this.setState({ tasks: tasks }, this.filterTasks);
     };
 
     async _loadFontsAsync() {
@@ -75,9 +91,10 @@ export default class TaskList extends Component {
         this.setState({ fontsLoaded: true });
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
+        this.filterTasks();
         this._loadFontsAsync();
-    }
+    };
 
     render() {
         const today = moment().locale("pt-br").format("ddd, D [de] MMMM YYYY");
@@ -111,7 +128,7 @@ export default class TaskList extends Component {
                     </ImageBackground>
                     <View style={styles.taskList}>
                         <FlatList
-                            data={this.state.tasks}
+                            data={this.state.visibleTasks}
                             keyExtractor={(item) => `${item.id}`}
                             renderItem={({ item }) => (
                                 <Task {...item} toggleTask={this.toggleTask} />
