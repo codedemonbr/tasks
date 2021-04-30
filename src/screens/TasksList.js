@@ -6,6 +6,7 @@ import {
     StatusBar,
     ImageBackground,
     StyleSheet,
+    FlatList,
 } from "react-native";
 import Task from "../components/Task";
 
@@ -33,6 +34,20 @@ let customFonts = {
 export default class TaskList extends Component {
     state = {
         fontsLoaded: false,
+        tasks: [
+            {
+                id: Math.random(),
+                desc: "Comprar livro de react native",
+                estimateAt: new Date(),
+                doneAt: new Date(),
+            },
+            {
+                id: Math.random(),
+                desc: "Ler livro de react native",
+                estimateAt: new Date(),
+                doneAt: null,
+            },
+        ],
     };
 
     async _loadFontsAsync() {
@@ -61,15 +76,10 @@ export default class TaskList extends Component {
                         </View>
                     </ImageBackground>
                     <View style={styles.taskList}>
-                        <Task
-                            desc="Comprar Livro"
-                            estimateAt={new Date()}
-                            doneAt={new Date()}
-                        />
-                        <Task
-                            desc="Ler Livro"
-                            estimateAt={new Date()}
-                            doneAt={null}
+                        <FlatList
+                            data={this.state.tasks}
+                            keyExtractor={(item) => `${item.id}`}
+                            renderItem={({ item }) => <Task {...item} />}
                         />
                     </View>
                 </SafeAreaView>
