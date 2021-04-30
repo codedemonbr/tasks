@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import commonStyles from "../commonStyles";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
@@ -25,9 +25,14 @@ export default (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.checkContainer}>
-                {getCheckView(props.doneAt)}
-            </View>
+            <TouchableWithoutFeedback
+                onPress={() => props.toggleTask(props.id)}
+            >
+                <View style={styles.checkContainer}>
+                    {getCheckView(props.doneAt)}
+                </View>
+            </TouchableWithoutFeedback>
+
             <View>
                 <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
                 <Text style={[styles.date]}>{formattedDate} </Text>
