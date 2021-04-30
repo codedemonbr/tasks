@@ -7,7 +7,11 @@ import {
     ImageBackground,
     StyleSheet,
     FlatList,
+    TouchableOpacity,
+    Plataform,
+    Platform,
 } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import Task from "../components/Task";
 
 import todayImage from "../../assets/imgs/today.jpg";
@@ -33,6 +37,7 @@ let customFonts = {
 
 export default class TaskList extends Component {
     state = {
+        showDoneTasks: true,
         fontsLoaded: false,
         tasks: [
             {
@@ -48,6 +53,10 @@ export default class TaskList extends Component {
                 doneAt: null,
             },
         ],
+    };
+
+    toggleFilter = () => {
+        this.setState({ showDoneTasks: !this.state.showDoneTasks });
     };
 
     toggleTask = (taskId) => {
@@ -81,6 +90,20 @@ export default class TaskList extends Component {
                         source={todayImage}
                         style={styles.background}
                     >
+                        <View style={styles.iconBar}>
+                            <TouchableOpacity onPress={this.toggleFilter}>
+                                <FontAwesome
+                                    name={
+                                        this.state.showDoneTasks
+                                            ? "eye"
+                                            : "eye-slash"
+                                    }
+                                    color="aqua"
+                                    size={20}
+                                    color={commonStyles.colors.secondary}
+                                />
+                            </TouchableOpacity>
+                        </View>
                         <View style={styles.titleBar}>
                             <Text style={[styles.title]}>Hoje</Text>
                             <Text style={[styles.subtitle]}>{today}</Text>
@@ -134,5 +157,11 @@ const styles = StyleSheet.create({
         fontSize: 30,
         marginLeft: 20,
         marginBottom: 30,
+    },
+    iconBar: {
+        flexDirection: "row",
+        marginHorizontal: 20,
+        justifyContent: "flex-end",
+        marginTop: Platform.OS === "ios" ? 40 : 20,
     },
 });
