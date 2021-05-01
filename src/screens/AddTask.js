@@ -1,31 +1,57 @@
 import React, { Component } from "react";
 import {
+    Platform,
     Modal,
     View,
+    Text,
+    TouchableOpacity,
+    TextInput,
     StyleSheet,
     TouchableWithoutFeedback,
-    TouchableOpacity,
-    Text,
-    TextInput,
 } from "react-native";
+
+import moment from "moment";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import commonStyles from "../commonStyles";
 
-const initialState = { desc: "", date: new Date() };
+const initialState = { desc: "", date: new Date(), showDatePicker: false };
+
 export default class AddTask extends Component {
     state = {
         ...initialState,
     };
 
     getDatePicker = () => {
-        return (
+        let datePicker = (
             <DateTimePicker
                 value={this.state.date}
-                onChange={(_, date) => this.setState({ date })}
+                onChange={(_, date) =>
+                    this.setState({ date, showDatePicker: false })
+                }
                 mode="date"
             />
         );
+
+        const dateString = moment(this.state.date).format(
+            "ddd, D [de] MMMM [de] YYYY"
+        );
+
+        if (Platform.OS === "android") {
+            datePicker = (
+                <View>
+                    <TouchableOpacity
+                        onPress={() => this.setState({ showDatePicker: true })}
+                    >
+                        <Text style={styles.date}>{dateString}</Text>
+                    </TouchableOpacity>
+                    {this.state.showDatePicker && datePicker}
+                    {/* a substituição só vai rolar se esta expressão em cima for verdadeira */}
+                </View>
+            );
+        }
+
+        return datePicker;
     };
 
     render() {
@@ -71,7 +97,7 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0, 0, 0, 0.7)",
     },
     container: {
-        backgroundColor: "#fff",
+        backgroundColor: "#FFF",
     },
     header: {
         backgroundColor: commonStyles.colors.today,
@@ -96,5 +122,9 @@ const styles = StyleSheet.create({
         margin: 20,
         marginRight: 30,
         color: commonStyles.colors.today,
+    },
+    date: {
+        fontSize: 20,
+        marginLeft: 15,
     },
 });
