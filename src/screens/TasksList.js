@@ -27,6 +27,7 @@ import {
     Lato_400Regular,
     Lato_900Black_Italic,
 } from "@expo-google-fonts/lato";
+import AddTask from "./AddTask";
 
 let customFonts = {
     Lato_100Thin,
@@ -38,6 +39,7 @@ let customFonts = {
 export default class TaskList extends Component {
     state = {
         showDoneTasks: true,
+        showAddTask: true,
         visibleTasks: [],
         fontsLoaded: false,
         tasks: [
@@ -103,6 +105,10 @@ export default class TaskList extends Component {
             return (
                 <SafeAreaView style={styles.container}>
                     <StatusBar />
+                    <AddTask
+                        isVisible={this.state.showAddTask}
+                        onCancel={() => this.setState({ showAddTask: false })}
+                    />
                     <ImageBackground
                         source={todayImage}
                         style={styles.background}
