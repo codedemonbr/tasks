@@ -8,8 +8,8 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
-    Plataform,
     Platform,
+    Alert,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Task from "../components/Task";
@@ -85,7 +85,24 @@ export default class TaskList extends Component {
             }
         });
 
-        this.setState({ tasks: tasks }, this.filterTasks);
+        this.setState({ tasks }, this.filterTasks);
+    };
+
+    addTask = (newTask) => {
+        if (!newTask.desc || !newTask.desc.trim()) {
+            Alert.alert("Dados Inválidos", "Descrição não informada!");
+            return;
+        }
+
+        const tasks = [...this.state.tasks];
+        tasks.push({
+            id: Math.random(),
+            desc: newTask.desc,
+            estimateAt: newTask.date,
+            doneAt: null,
+        });
+
+        this.setState({ tasks, showAddTask: false }, this.filterTasks);
     };
 
     async _loadFontsAsync() {
@@ -108,6 +125,7 @@ export default class TaskList extends Component {
                     <AddTask
                         isVisible={this.state.showAddTask}
                         onCancel={() => this.setState({ showAddTask: false })}
+                        onSave={this.addTask}
                     />
                     <ImageBackground
                         source={todayImage}
