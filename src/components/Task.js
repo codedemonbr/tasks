@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { FontAwesome } from "@expo/vector-icons";
-import commonStyles from "../commonStyles";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
 import AppLoading from "expo-app-loading";
 
@@ -16,6 +15,8 @@ const Icon = FontAwesome;
 
 import moment from "moment";
 import "moment/locale/pt-br";
+
+import commonStyles from "../commonStyles";
 
 export default (props) => {
     let [fontsLoaded] = useFonts({ Lato_400Regular });
@@ -35,13 +36,30 @@ export default (props) => {
     const getRightContent = () => {
         return (
             <TouchableOpacity style={styles.right}>
-                <Icon name="trash" size={30} color="white" />
+                <Icon name="trash" size={30} color="#FFFFFF" />
             </TouchableOpacity>
         );
     };
 
+    const getLeftContent = () => {
+        return (
+            <View style={styles.left}>
+                <Icon
+                    name="trash"
+                    size={20}
+                    color="white"
+                    style={styles.excludeIcon}
+                />
+                <Text style={styles.excludeText}>Excluir</Text>
+            </View>
+        );
+    };
+
     return (
-        <Swipeable renderRightActions={getRightContent}>
+        <Swipeable
+            renderRightActions={getRightContent}
+            renderLeftActions={getLeftContent}
+        >
             <View style={styles.container}>
                 <TouchableWithoutFeedback
                     onPress={() => props.toggleTask(props.id)}
@@ -66,7 +84,7 @@ function getCheckView(doneAt) {
     if (doneAt != null) {
         return (
             <View style={styles.done}>
-                <FontAwesome name="check" size={20} color="#FFF"></FontAwesome>
+                <Icon name="check" size={20} color="#FFF"></Icon>
             </View>
         );
     } else {
@@ -78,9 +96,10 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         borderColor: "#AAA",
-        borderWidth: 1,
+        borderBottomWidth: 1,
         alignItems: "center",
         paddingVertical: 10,
+        backgroundColor: "white",
     },
     checkContainer: {
         width: "20%",
@@ -119,5 +138,19 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-end",
         paddingHorizontal: 20,
+    },
+    left: {
+        flex: 1,
+        backgroundColor: "red",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    excludeIcon: {
+        marginLeft: 10,
+    },
+    excludeText: {
+        color: "white",
+        fontSize: 20,
+        margin: 10,
     },
 });
