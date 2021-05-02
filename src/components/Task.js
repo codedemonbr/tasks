@@ -1,9 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+} from "react-native";
+import Swipeable from "react-native-gesture-handler/Swipeable";
 import { FontAwesome } from "@expo/vector-icons";
 import commonStyles from "../commonStyles";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
 import AppLoading from "expo-app-loading";
+
+const Icon = FontAwesome;
 
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -23,21 +32,33 @@ export default (props) => {
         .locale("pt-br")
         .format("ddd, D [de] MMMM");
 
-    return (
-        <View style={styles.container}>
-            <TouchableWithoutFeedback
-                onPress={() => props.toggleTask(props.id)}
-            >
-                <View style={styles.checkContainer}>
-                    {getCheckView(props.doneAt)}
-                </View>
-            </TouchableWithoutFeedback>
+    const getRightContent = () => {
+        return (
+            <TouchableOpacity style={styles.right}>
+                <Icon name="trash" size={30} color="white" />
+            </TouchableOpacity>
+        );
+    };
 
-            <View>
-                <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text style={[styles.date]}>{formattedDate} </Text>
+    return (
+        <Swipeable renderRightActions={getRightContent}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback
+                    onPress={() => props.toggleTask(props.id)}
+                >
+                    <View style={styles.checkContainer}>
+                        {getCheckView(props.doneAt)}
+                    </View>
+                </TouchableWithoutFeedback>
+
+                <View>
+                    <Text style={[styles.desc, doneOrNotStyle]}>
+                        {props.desc}
+                    </Text>
+                    <Text style={[styles.date]}>{formattedDate} </Text>
+                </View>
             </View>
-        </View>
+        </Swipeable>
     );
 };
 
@@ -91,5 +112,12 @@ const styles = StyleSheet.create({
         fontFamily: "Lato_400Regular",
         color: commonStyles.colors.subText,
         fontSize: 12,
+    },
+    right: {
+        backgroundColor: "red",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        paddingHorizontal: 20,
     },
 });

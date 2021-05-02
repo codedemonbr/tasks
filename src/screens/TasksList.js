@@ -11,6 +11,7 @@ import {
     Platform,
     Alert,
 } from "react-native";
+
 import { FontAwesome } from "@expo/vector-icons";
 import Task from "../components/Task";
 
