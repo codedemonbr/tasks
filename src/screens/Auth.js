@@ -4,14 +4,13 @@ import {
     Text,
     StyleSheet,
     View,
-    TextInput,
     TouchableOpacity,
-    Platform,
     Alert,
 } from "react-native";
 
 import backgroundImage from "../../assets/imgs/login.jpg";
 import commonStyles from "../commonStyles";
+import AuthInput from "../components/AuthInput";
 
 export default class Auth extends Component {
     state = {
@@ -23,7 +22,7 @@ export default class Auth extends Component {
     };
 
     signinOrSignup = () => {
-        if (this.state.stageMew) {
+        if (this.state.stageNew) {
             Alert.alert("Success!", "Account created");
         } else {
             Alert.alert("Success!", "You're logged in");
@@ -42,20 +41,23 @@ export default class Auth extends Component {
                     </Text>
 
                     {this.state.stageNew && (
-                        <TextInput
+                        <AuthInput
+                            icon="user"
                             placeholder="Name"
                             value={this.state.name}
                             style={styles.input}
-                            onChange={(name) => this.setState({ name })}
+                            onChangeText={(name) => this.setState({ name })}
                         />
                     )}
-                    <TextInput
+                    <AuthInput
+                        icon="at"
                         placeholder="E-mail"
                         value={this.state.email}
                         style={styles.input}
                         onChangeText={(email) => this.setState({ email })}
                     />
-                    <TextInput
+                    <AuthInput
+                        icon="lock"
                         placeholder="Password"
                         value={this.state.password}
                         style={styles.input}
@@ -63,7 +65,8 @@ export default class Auth extends Component {
                         onChangeText={(password) => this.setState({ password })}
                     />
                     {this.state.stageNew && (
-                        <TextInput
+                        <AuthInput
+                            icon="asterisk"
                             placeholder="Confirm password"
                             value={this.state.confirmPassword}
                             style={styles.input}
@@ -110,27 +113,31 @@ const styles = StyleSheet.create({
         fontSize: 70,
         marginBottom: 10,
     },
-    input: {
-        backgroundColor: "#FFF",
-        marginTop: 10,
-        padding: Platform.OS == "ios" ? 15 : 10,
+    subtitle: {
+        color: "#FFF",
+        fontSize: 20,
+        textAlign: "center",
+        marginBottom: 10,
     },
     formContainer: {
-        backgroundColor: "rgba(0,0,0,0.8)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         padding: 20,
         width: "90%",
+        borderRadius: 20,
+    },
+    input: {
+        marginTop: 10,
+        backgroundColor: "#FFF",
     },
     button: {
         backgroundColor: "#080",
         marginTop: 10,
         padding: 10,
         alignItems: "center",
+        borderRadius: 25,
     },
-    buttonText: { color: "#FFF", fontSize: 20 },
-    subtitle: {
+    buttonText: {
         color: "#FFF",
         fontSize: 20,
-        textAlign: "center",
-        marginBottom: 10,
     },
 });
