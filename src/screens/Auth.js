@@ -14,8 +14,11 @@ import commonStyles from "../commonStyles";
 
 export default class Auth extends Component {
     state = {
+        name: "",
         email: "",
         password: "",
+        confirmPassword: "",
+        stageNew: true,
     };
 
     render() {
@@ -23,6 +26,20 @@ export default class Auth extends Component {
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <Text style={styles.title}>Tasks</Text>
                 <View style={styles.formContainer}>
+                    <Text style={styles.subtitle}>
+                        {this.state.stageNew
+                            ? "Create your account"
+                            : "Insert your data"}
+                    </Text>
+
+                    {this.state.stageNew && (
+                        <TextInput
+                            placeholder="Name"
+                            value={this.state.name}
+                            style={styles.input}
+                            onChange={(name) => this.setState({ name })}
+                        />
+                    )}
                     <TextInput
                         placeholder="E-mail"
                         value={this.state.email}
@@ -33,11 +50,25 @@ export default class Auth extends Component {
                         placeholder="Password"
                         value={this.state.password}
                         style={styles.input}
+                        secureTextEntry={true}
                         onChangeText={(password) => this.setState({ password })}
                     />
+                    {this.state.stageNew && (
+                        <TextInput
+                            placeholder="Confirm password"
+                            value={this.state.confirmPassword}
+                            style={styles.input}
+                            secureTextEntry={true}
+                            onChangeText={(confirmPassword) =>
+                                this.setState({ confirmPassword })
+                            }
+                        />
+                    )}
                     <TouchableOpacity>
                         <View style={styles.button}>
-                            <Text style={styles.buttonText}>Enter</Text>
+                            <Text style={styles.buttonText}>
+                                {this.state.stageNew ? "Register" : "Enter"}
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -75,4 +106,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     buttonText: { color: "#FFF", fontSize: 20 },
+    subtitle: {
+        color: "#FFF",
+        fontSize: 20,
+        textAlign: "center",
+        marginBottom: 10,
+    },
 });
