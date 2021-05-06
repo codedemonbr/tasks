@@ -11,52 +11,46 @@ import {
     Platform,
     Alert,
 } from "react-native";
-
+// import {
+//     Lato_100Thin,
+//     Lato_300Light,
+//     Lato_400Regular,
+//     Lato_900Black_Italic,
+// } from "@expo-google-fonts/lato";
+import moment from "moment";
 import { FontAwesome } from "@expo/vector-icons";
-import Task from "../components/Task";
+// import * as Font from "expo-font";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import Task from "../components/Task";
 import todayImage from "../../assets/imgs/today.jpg";
 import commonStyles from "../commonStyles";
-
-import moment from "moment";
 import "moment/locale/pt-br";
-
-import * as Font from "expo-font";
-import {
-    Lato_100Thin,
-    Lato_300Light,
-    Lato_400Regular,
-    Lato_900Black_Italic,
-} from "@expo-google-fonts/lato";
 import AddTask from "./AddTask";
 
-let customFonts = {
-    Lato_100Thin,
-    Lato_300Light,
-    Lato_400Regular,
-    Lato_900Black_Italic,
+// let customFonts = {
+//     Lato_100Thin,
+//     Lato_300Light,
+//     Lato_400Regular,
+//     Lato_900Black_Italic,
+// };
+const Icon = FontAwesome;
+const initialState = {
+    showDoneTasks: true,
+    showAddTask: false,
+    visibleTasks: [],
+    // fontsLoaded: false,
+    tasks: [],
 };
-
 export default class TaskList extends Component {
     state = {
-        showDoneTasks: true,
-        showAddTask: true,
-        visibleTasks: [],
-        fontsLoaded: false,
-        tasks: [
-            {
-                id: Math.random(),
-                desc: "Comprar livro de react native",
-                estimateAt: new Date(),
-                doneAt: new Date(),
-            },
-            {
-                id: Math.random(),
-                desc: "Ler livro de react native",
-                estimateAt: new Date(),
-                doneAt: null,
-            },
-        ],
+        ...initialState,
+    };
+
+    componentDidMount = async () => {
+        const stateString = await AsyncStorage.getItem("tasksState");
+        const state = JSON.parse(stateString) || initialState;
+        this.setState(state, this.filterTasks);
     };
 
     toggleFilter = () => {
@@ -76,6 +70,7 @@ export default class TaskList extends Component {
         }
 
         this.setState({ visibleTasks });
+        AsyncStorage.setItem("tasksState", JSON.stringify(this.state));
     };
 
     toggleTask = (taskId) => {
@@ -111,84 +106,75 @@ export default class TaskList extends Component {
         this.setState({ tasks }, this.filterTasks);
     };
 
-    async _loadFontsAsync() {
-        await Font.loadAsync(customFonts);
-        this.setState({ fontsLoaded: true });
-    }
-
-    componentDidMount = () => {
-        this.filterTasks();
-        this._loadFontsAsync();
-    };
+    // async _loadFontsAsync() {
+    //     await Font.loadAsync(customFonts);
+    //     this.setState({ fontsLoaded: true });
+    // }
 
     render() {
         const today = moment().locale("pt-br").format("ddd, D [de] MMMM YYYY");
 
-        if (this.state.fontsLoaded) {
-            return (
-                <SafeAreaView style={styles.container}>
-                    <StatusBar />
-                    <AddTask
-                        isVisible={this.state.showAddTask}
-                        onCancel={() => this.setState({ showAddTask: false })}
-                        onSave={this.addTask}
-                    />
-                    <ImageBackground
-                        source={todayImage}
-                        style={styles.background}
-                    >
-                        <View style={styles.iconBar}>
-                            <TouchableOpacity onPress={this.toggleFilter}>
-                                <FontAwesome
-                                    name={
-                                        this.state.showDoneTasks
-                                            ? "eye"
-                                            : "eye-slash"
-                                    }
-                                    color="aqua"
-                                    size={20}
-                                    color={commonStyles.colors.secondary}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.titleBar}>
-                            <Text style={[styles.title]}>Hoje</Text>
-                            <Text style={[styles.subtitle]}>{today}</Text>
-                        </View>
-                    </ImageBackground>
-                    <View style={styles.taskList}>
-                        <FlatList
-                            data={this.state.visibleTasks}
-                            keyExtractor={(item) => `${item.id}`}
-                            renderItem={({ item }) => (
-                                <Task
-                                    {...item}
-                                    onToggleTask={this.toggleTask}
-                                    onDelete={this.deleteTask}
-                                />
-                            )}
-                        />
+        // if (this.state.fontsLoaded) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <StatusBar />
+                <AddTask
+                    isVisible={this.state.showAddTask}
+                    onCancel={() => this.setState({ showAddTask: false })}
+                    onSave={this.addTask}
+                />
+                <ImageBackground source={todayImage} style={styles.background}>
+                    <View style={styles.iconBar}>
+                        <TouchableOpacity onPress={this.toggleFilter}>
+                            <Icon
+                                name={
+                                    this.state.showDoneTasks
+                                        ? "eye"
+                                        : "eye-slash"
+                                }
+                                size={20}
+                                color={commonStyles.colors.secondary}
+                            />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        activeOpacity={0.7}
-                        onPress={() => this.setState({ showAddTask: true })}
-                    >
-                        <FontAwesome
-                            name="plus"
-                            size={20}
-                            color={commonStyles.colors.secondary}
-                        />
-                    </TouchableOpacity>
-                </SafeAreaView>
-            );
-        } else {
-            return (
-                <View>
-                    <Text>Fontes não carregaram</Text>
+                    <View style={styles.titleBar}>
+                        <Text style={styles.title}>Hoje</Text>
+                        <Text style={styles.subtitle}>{today}</Text>
+                    </View>
+                </ImageBackground>
+                <View style={styles.taskList}>
+                    <FlatList
+                        data={this.state.visibleTasks}
+                        keyExtractor={(item) => `${item.id}`}
+                        renderItem={({ item }) => (
+                            <Task
+                                {...item}
+                                onToggleTask={this.toggleTask}
+                                onDelete={this.deleteTask}
+                            />
+                        )}
+                    />
                 </View>
-            );
-        }
+                <TouchableOpacity
+                    style={styles.addButton}
+                    activeOpacity={0.7}
+                    onPress={() => this.setState({ showAddTask: true })}
+                >
+                    <Icon
+                        name="plus"
+                        size={20}
+                        color={commonStyles.colors.secondary}
+                    />
+                </TouchableOpacity>
+            </SafeAreaView>
+        );
+        // } else {
+        //     return (
+        //         <View>
+        //             <Text>Fontes não carregaram</Text>
+        //         </View>
+        //     );
+        // }
     }
 }
 
@@ -207,14 +193,14 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     title: {
-        fontFamily: "Lato_400Regular",
+        // fontFamily: "Lato_400Regular",
         color: commonStyles.colors.secondary,
         fontSize: 50,
         marginLeft: 20,
         marginBottom: 20,
     },
     subtitle: {
-        fontFamily: "Lato_300Light",
+        // fontFamily: "Lato_300Light",
         color: commonStyles.colors.secondary,
         fontSize: 30,
         marginLeft: 20,

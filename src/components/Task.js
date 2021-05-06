@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { FontAwesome } from "@expo/vector-icons";
-import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
-import AppLoading from "expo-app-loading";
+// import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
+// import AppLoading from "expo-app-loading";
 
 const Icon = FontAwesome;
 
@@ -19,11 +19,11 @@ import "moment/locale/pt-br";
 import commonStyles from "../commonStyles";
 
 export default (props) => {
-    let [fontsLoaded] = useFonts({ Lato_400Regular });
+    // let [fontsLoaded] = useFonts({ Lato_400Regular });
 
-    if (!fontsLoaded) {
-        return <AppLoading />;
-    }
+    // if (!fontsLoaded) {
+    //     return <AppLoading />;
+    // }
 
     const doneOrNotStyle =
         props.doneAt != null ? { textDecorationLine: "line-through" } : {};
@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     desc: {
-        fontFamily: "Lato_400Regular",
+        // fontFamily: "Lato_400Regular",
         color: commonStyles.colors.mainText,
         fontSize: 15,
     },
     date: {
-        fontFamily: "Lato_400Regular",
+        // fontFamily: "Lato_400Regular",
         color: commonStyles.colors.subText,
         fontSize: 12,
     },

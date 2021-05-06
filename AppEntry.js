@@ -1,5 +1,5 @@
-import registerRootComponent from 'expo/build/launch/registerRootComponent';
+import registerRootComponent from "expo/build/launch/registerRootComponent";
 
-import TaskList from './src/screens/TasksList';
+import Auth from "./src/screens/Auth";
 
-registerRootComponent(TaskList);
+registerRootComponent(Auth);
