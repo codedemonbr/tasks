@@ -11,37 +11,28 @@ import {
     Platform,
     Alert,
 } from "react-native";
-// import {
-//     Lato_100Thin,
-//     Lato_300Light,
-//     Lato_400Regular,
-//     Lato_900Black_Italic,
-// } from "@expo-google-fonts/lato";
-import moment from "moment";
-import { FontAwesome } from "@expo/vector-icons";
-// import * as Font from "expo-font";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Task from "../components/Task";
-import todayImage from "../../assets/imgs/today.jpg";
-import commonStyles from "../commonStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome } from "@expo/vector-icons";
+import axios from "axios";
+import moment from "moment";
+const Icon = FontAwesome;
+
 import "moment/locale/pt-br";
+
+import { server, showError } from "../common";
+import commonStyles from "../commonStyles";
+import todayImage from "../../assets/imgs/today.jpg";
+import Task from "../components/Task";
 import AddTask from "./AddTask";
 
-// let customFonts = {
-//     Lato_100Thin,
-//     Lato_300Light,
-//     Lato_400Regular,
-//     Lato_900Black_Italic,
-// };
-const Icon = FontAwesome;
 const initialState = {
     showDoneTasks: true,
     showAddTask: false,
     visibleTasks: [],
-    // fontsLoaded: false,
     tasks: [],
 };
+
 export default class TaskList extends Component {
     state = {
         ...initialState,
@@ -49,8 +40,25 @@ export default class TaskList extends Component {
 
     componentDidMount = async () => {
         const stateString = await AsyncStorage.getItem("tasksState");
-        const state = JSON.parse(stateString) || initialState;
-        this.setState(state, this.filterTasks);
+        const savedState = JSON.parse(stateString) || initialState;
+        this.setState(
+            {
+                showDoneTasks: savedState.showDoneTasks,
+            },
+            this.filterTasks
+        );
+
+        this.loadTasks();
+    };
+
+    loadTasks = async () => {
+        try {
+            const maxDate = moment().format("YYYY-MM-DD 23:59:59");
+            const res = await axios.get(`${server}/tasks?date=${maxDate}`);
+            this.setState({ tasks: res.data }, this.filterTasks);
+        } catch (e) {
+            showError(e);
+        }
     };
 
     toggleFilter = () => {
@@ -70,7 +78,13 @@ export default class TaskList extends Component {
         }
 
         this.setState({ visibleTasks });
-        AsyncStorage.setItem("tasksState", JSON.stringify(this.state));
+        AsyncStorage.setItem(
+            "tasksState",
+            JSON.stringify({
+                showDoneTasks: this.state.showDoneTasks,
+            })
+        );
+        //just showDoneTasks are stored in AsyncStorage
     };
 
     toggleTask = (taskId) => {
@@ -106,15 +120,9 @@ export default class TaskList extends Component {
         this.setState({ tasks }, this.filterTasks);
     };
 
-    // async _loadFontsAsync() {
-    //     await Font.loadAsync(customFonts);
-    //     this.setState({ fontsLoaded: true });
-    // }
-
     render() {
         const today = moment().locale("pt-br").format("ddd, D [de] MMMM YYYY");
 
-        // if (this.state.fontsLoaded) {
         return (
             <SafeAreaView style={styles.container}>
                 <StatusBar />
@@ -168,13 +176,6 @@ export default class TaskList extends Component {
                 </TouchableOpacity>
             </SafeAreaView>
         );
-        // } else {
-        //     return (
-        //         <View>
-        //             <Text>Fontes não carregaram</Text>
-        //         </View>
-        //     );
-        // }
     }
 }
 
@@ -193,14 +194,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     title: {
-        // fontFamily: "Lato_400Regular",
         color: commonStyles.colors.secondary,
         fontSize: 50,
         marginLeft: 20,
         marginBottom: 20,
     },
     subtitle: {
-        // fontFamily: "Lato_300Light",
         color: commonStyles.colors.secondary,
         fontSize: 30,
         marginLeft: 20,
