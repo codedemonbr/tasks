@@ -6,7 +6,14 @@ const server =
         : "http://192.168.0.12:3000";
 
 function showError(err) {
-    Alert.alert("Oops! There was a problem!", `Message: ${err}`);
+    if (err.response && err.response.data) {
+        Alert.alert(
+            "Oops! There was a problem!",
+            `Message: ${err.response.data}`
+        );
+    } else {
+        Alert.alert("Oops! There was a problem!", `Message: ${err}`);
+    }
 }
 
 function showSuccess(msg) {
