@@ -5,9 +5,9 @@ import { createDrawerNavigator } from "react-navigation-drawer";
 import Auth from "./screens/Auth";
 import TaskList from "./screens/TasksList";
 
+import AuthOrApp from "./screens/AuthOrApp";
 import Menu from "./screens/Menu";
 import commonStyles from "./commonStyles";
-import AuthOrApp from "./screens/AuthOrApp";
 
 const menuConfig = {
     initialRouteName: "Today",
